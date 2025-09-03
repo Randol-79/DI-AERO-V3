@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DI AERO - Drone Intelligence Platform</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header">
+        <div class="header-content">
+            <div class="header-left">
+                <h1 class="header-logo">DI AERO</h1>
+                <span class="header-subtitle">Aerial Enhanced Reconnaissance & Operations</span>
+            </div>
+            <nav class="header-nav">
+                <button class="nav-btn active" data-page="dashboard">Dashboard</button>
+                <button class="nav-btn" data-page="flight-ops">Flight Ops</button>
+                <button class="nav-btn" data-page="thermal">Thermal Analysis</button>
+                <button class="nav-btn" data-page="agents">Agent Ecosystem</button>
+                <button class="nav-btn" data-page="custody">Chain of Custody</button>
+                <button class="nav-btn" data-page="integrations">Integrations</button>
+                <button class="nav-btn" data-page="compliance">Compliance</button>
+                <button class="nav-btn" data-page="analytics">Analytics</button>
+            </nav>
+            <div class="header-right">
+                <div class="status-indicator" id="connection-status">
+                    <span class="status-dot active"></span>
+                    <span>Connected</span>
+                </div>
+                <div class="user-menu">
+                    <span>Sarah Johnson - Pilot</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Dashboard Page -->
+        <section id="dashboard-page" class="page active">
+            <div class="page-header">
+                <h2>Mission Control Dashboard</h2>
+                <div class="page-actions">
+                    <button class="btn btn--primary">New Mission</button>
+                    <button class="btn btn--secondary">Emergency Protocol</button>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- System Health -->
+                <div class="card dashboard-card">
+                    <div class="card__header">
+                        <h3>System Health</h3>
+                        <span class="status status--success">All Systems Operational</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="health-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Jetson Orin</span>
+                                <div class="metric-value">
+                                    <span>CPU: 45%</span>
+                                    <span>GPU: 78%</span>
+                                    <span>Temp: 62°C</span>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">AI Inference</span>
+                                <span class="metric-value highlight">8.5ms latency</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Cloud Connectivity</span>
+                                <span class="metric-value">120ms response</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Missions -->
+                <div class="card dashboard-card">
+                    <div class="card__header">
+                        <h3>Active Missions</h3>
+                        <span class="badge">2 Active</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="mission-list" id="active-missions">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weather Alerts -->
+                <div class="card dashboard-card">
+                    <div class="card__header">
+                        <h3>Weather Conditions</h3>
+                        <span class="status status--warning">Wind Advisory</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="weather-info">
+                            <div class="weather-current">
+                                <span class="weather-temp">72°F</span>
+                                <span class="weather-desc">Clear, Wind 5mph NE</span>
+                            </div>
+                            <div class="weather-alert">
+                                <strong>Wind Advisory:</strong> Winds 15-25 mph expected. Monitor flight conditions. Expires 3:00 PM
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent Status -->
+                <div class="card dashboard-card">
+                    <div class="card__header">
+                        <h3>Agent Ecosystem</h3>
+                        <span class="status status--success">5 Agents Active</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="agent-overview" id="agent-overview">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Flight Operations Page -->
+        <section id="flight-ops-page" class="page">
+            <div class="page-header">
+                <h2>Flight Operations</h2>
+                <div class="page-actions">
+                    <button class="btn btn--primary">Plan Mission</button>
+                    <button class="btn btn--outline">Upload Flight Data</button>
+                </div>
+            </div>
+
+            <div class="flight-ops-layout">
+                <div class="map-container">
+                    <div id="flight-map" class="flight-map"></div>
+                    <div class="map-controls">
+                        <button class="map-btn" id="center-map">Center View</button>
+                        <button class="map-btn" id="show-nofly">No-Fly Zones</button>
+                        <button class="map-btn" id="weather-overlay">Weather Layer</button>
+                    </div>
+                </div>
+                
+                <div class="flight-sidebar">
+                    <div class="card">
+                        <div class="card__header">
+                            <h3>Current Mission: M001</h3>
+                            <span class="status status--success">Active</span>
+                        </div>
+                        <div class="card__body">
+                            <div class="flight-details">
+                                <div class="detail-row">
+                                    <span class="label">Drone:</span>
+                                    <span class="value">DJI Mavic 3T-Alpha</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Pilot:</span>
+                                    <span class="value">Sarah Johnson</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Altitude:</span>
+                                    <span class="value">120 ft AGL</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Battery:</span>
+                                    <span class="value">87%</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Signal:</span>
+                                    <span class="value">Strong (-65 dBm)</span>
+                                </div>
+                            </div>
+                            <div class="flight-controls">
+                                <button class="btn btn--primary btn--full-width">Return to Home</button>
+                                <button class="btn btn--outline btn--full-width">Pause Mission</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__header">
+                            <h3>Mission Queue</h3>
+                        </div>
+                        <div class="card__body">
+                            <div class="mission-queue" id="mission-queue">
+                                <!-- Dynamic content -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Thermal Analysis Page -->
+        <section id="thermal-page" class="page">
+            <div class="page-header">
+                <h2>Thermal Analysis & Damage Detection</h2>
+                <div class="page-actions">
+                    <button class="btn btn--primary">Generate Report</button>
+                    <button class="btn btn--outline">Export Data</button>
+                </div>
+            </div>
+
+            <div class="thermal-layout">
+                <div class="thermal-viewer">
+                    <div class="thermal-controls">
+                        <select class="form-control" id="thermal-image-select">
+                            <option value="0">Roof Thermal Overview</option>
+                            <option value="1">Radiometric Analysis</option>
+                            <option value="2">Visual Damage - South Side</option>
+                            <option value="3">Visual Damage - East Side</option>
+                        </select>
+                        <button class="btn btn--secondary">YOLOv8 Analysis</button>
+                        <button class="btn btn--outline">Temperature Map</button>
+                    </div>
+                    
+                    <div class="thermal-image-container">
+                        <img id="thermal-image" src="https://pub-23f7e1f517734fc09a3807185400d484.r2.dev/Aerial_Thermal_Imaging_roof.jpg" alt="Thermal Analysis">
+                        <div class="thermal-overlay" id="thermal-overlay">
+                            <!-- AI detection overlays -->
+                            <div class="detection-box" style="top: 25%; left: 30%; width: 15%; height: 10%;">
+                                <span class="detection-label">Thermal Anomaly - 94% confidence</span>
+                            </div>
+                            <div class="detection-box" style="top: 45%; left: 60%; width: 12%; height: 8%;">
+                                <span class="detection-label">Missing Shingles - 87% confidence</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="thermal-sidebar">
+                    <div class="card">
+                        <div class="card__header">
+                            <h3>AI Analysis Results</h3>
+                            <span class="status status--warning">Issues Detected</span>
+                        </div>
+                        <div class="card__body">
+                            <div class="analysis-results" id="analysis-results">
+                                <div class="result-item">
+                                    <div class="result-header">
+                                        <span class="result-type">Thermal Anomaly</span>
+                                        <span class="result-confidence">94%</span>
+                                    </div>
+                                    <p class="result-description">Elevated temperature detected indicating potential water intrusion or insulation issues.</p>
+                                    <span class="result-severity high">High Priority</span>
+                                </div>
+                                
+                                <div class="result-item">
+                                    <div class="result-header">
+                                        <span class="result-type">Missing Shingles</span>
+                                        <span class="result-confidence">87%</span>
+                                    </div>
+                                    <p class="result-description">Physical damage detected with exposed roof decking visible.</p>
+                                    <span class="result-severity medium">Medium Priority</span>
+                                </div>
+
+                                <div class="result-item">
+                                    <div class="result-header">
+                                        <span class="result-type">Gutter Damage</span>
+                                        <span class="result-confidence">76%</span>
+                                    </div>
+                                    <p class="result-description">Possible gutter separation or damage detected.</p>
+                                    <span class="result-severity low">Low Priority</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__header">
+                            <h3>Temperature Analysis</h3>
+                        </div>
+                        <div class="card__body">
+                            <div class="temp-stats">
+                                <div class="temp-stat">
+                                    <span class="temp-label">Max Temp</span>
+                                    <span class="temp-value hot">94.2°F</span>
+                                </div>
+                                <div class="temp-stat">
+                                    <span class="temp-label">Min Temp</span>
+                                    <span class="temp-value cool">78.1°F</span>
+                                </div>
+                                <div class="temp-stat">
+                                    <span class="temp-label">Avg Temp</span>
+                                    <span class="temp-value">84.7°F</span>
+                                </div>
+                                <div class="temp-stat">
+                                    <span class="temp-label">Anomalies</span>
+                                    <span class="temp-value">3 detected</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Agent Ecosystem Page -->
+        <section id="agents-page" class="page">
+            <div class="page-header">
+                <h2>Agent Ecosystem</h2>
+                <div class="page-actions">
+                    <button class="btn btn--primary">Deploy Agent</button>
+                    <button class="btn btn--outline">View Logs</button>
+                </div>
+            </div>
+
+            <div class="agents-grid">
+                <div class="agent-cards" id="agent-cards">
+                    <!-- Dynamic agent cards -->
+                </div>
+                
+                <div class="card agent-workflows">
+                    <div class="card__header">
+                        <h3>Active Workflows</h3>
+                        <span class="status status--success">3 Running</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="workflow-diagram">
+                            <div class="workflow-step active">
+                                <span class="step-icon">🛸</span>
+                                <span class="step-name">Mission Start</span>
+                            </div>
+                            <div class="workflow-arrow">→</div>
+                            <div class="workflow-step active">
+                                <span class="step-icon">🤖</span>
+                                <span class="step-name">Nova Navigation</span>
+                            </div>
+                            <div class="workflow-arrow">→</div>
+                            <div class="workflow-step processing">
+                                <span class="step-icon">🔥</span>
+                                <span class="step-name">Marla Analysis</span>
+                            </div>
+                            <div class="workflow-arrow">→</div>
+                            <div class="workflow-step">
+                                <span class="step-icon">📊</span>
+                                <span class="step-name">Rhea Reporting</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chain of Custody Page -->
+        <section id="custody-page" class="page">
+            <div class="page-header">
+                <h2>Chain of Custody Registry</h2>
+                <div class="page-actions">
+                    <button class="btn btn--primary">New Entry</button>
+                    <button class="btn btn--outline">Export Certificate</button>
+                </div>
+            </div>
+
+            <div class="custody-layout">
+                <div class="card">
+                    <div class="card__header">
+                        <h3>Blockchain Registry</h3>
+                        <span class="status status--success">Synchronized</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="blockchain-info">
+                            <div class="block-details">
+                                <div class="detail-row">
+                                    <span class="label">Latest Block:</span>
+                                    <span class="value">0x1a2b3c4d</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Validation Time:</span>
+                                    <span class="value">2.3 seconds</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Network Status:</span>
+                                    <span class="value">Healthy</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="merkle-tree">
+                            <h4>Merkle Tree Visualization</h4>
+                            <div class="tree-diagram">
+                                <div class="tree-level">
+                                    <div class="tree-node root">Root Hash</div>
+                                </div>
+                                <div class="tree-level">
+                                    <div class="tree-node">Hash AB</div>
+                                    <div class="tree-node">Hash CD</div>
+                                </div>
+                                <div class="tree-level">
+                                    <div class="tree-node">Hash A</div>
+                                    <div class="tree-node">Hash B</div>
+                                    <div class="tree-node">Hash C</div>
+                                    <div class="tree-node">Hash D</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__header">
+                        <h3>Evidence Chain</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="evidence-chain" id="evidence-chain">
+                            <!-- Dynamic evidence entries -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Integrations Page -->
+        <section id="integrations-page" class="page">
+            <div class="page-header">
+                <h2>System Integrations</h2>
+                <div class="page-actions">
+                    <button class="btn btn--primary">Add Integration</button>
+                    <button class="btn btn--outline">Test Connections</button>
+                </div>
+            </div>
+
+            <div class="integrations-grid">
+                <div class="card">
+                    <div class="card__header">
+                        <h3>CRM Connections</h3>
+                        <span class="status status--success">3 Connected</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="integration-list">
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <span class="integration-name">Salesforce</span>
+                                    <span class="integration-status connected">Connected</span>
+                                </div>
+                                <span class="integration-sync">Last sync: 2 min ago</span>
+                            </div>
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <span class="integration-name">HubSpot</span>
+                                    <span class="integration-status connected">Connected</span>
+                                </div>
+                                <span class="integration-sync">Last sync: 5 min ago</span>
+                            </div>
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <span class="integration-name">Google Sheets</span>
+                                    <span class="integration-status connected">Connected</span>
+                                </div>
+                                <span class="integration-sync">Last sync: 1 min ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__header">
+                        <h3>Weather APIs</h3>
+                        <span class="status status--success">Active</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="integration-list">
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <span class="integration-name">NOAA Weather</span>
+                                    <span class="integration-status connected">Connected</span>
+                                </div>
+                                <span class="integration-sync">Updates: Every 15 min</span>
+                            </div>
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <span class="integration-name">NWS Alerts</span>
+                                    <span class="integration-status connected">Connected</span>
+                                </div>
+                                <span class="integration-sync">Real-time monitoring</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card__header">
+                        <h3>Communication</h3>
+                        <span class="status status--success">2 Active</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="integration-list">
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <span class="integration-name">SMS Gateway</span>
+                                    <span class="integration-status connected">Connected</span>
+                                </div>
+                                <span class="integration-sync">Twilio API</span>
+                            </div>
+                            <div class="integration-item">
+                                <div class="integration-info">
+                                    <span class="integration-name">WebSocket Telemetry</span>
+                                    <span class="integration-status connected">Connected</span>
+                                </div>
+                                <span class="integration-sync">Real-time updates</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Compliance Page -->
+        <section id="compliance-page" class="page">
+            <div class="page-header">
+                <h2>Regulatory Compliance</h2>
+                <div class="page-actions">
+                    <button class="btn btn--primary">Generate Report</button>
+                    <button class="btn btn--outline">Schedule Audit</button>
+                </div>
+            </div>
+
+            <div class="compliance-grid">
+                <div class="card compliance-overview">
+                    <div class="card__header">
+                        <h3>Compliance Status</h3>
+                        <span class="status status--success">Fully Compliant</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="compliance-items">
+                            <div class="compliance-item">
+                                <div class="compliance-info">
+                                    <span class="compliance-name">FAA Part 107</span>
+                                    <span class="compliance-status current">Current</span>
+                                </div>
+                                <div class="compliance-details">
+                                    <span>Certificate: RC-107-2024-001</span>
+                                    <span>Expires: March 15, 2026</span>
+                                </div>
+                            </div>
+                            
+                            <div class="compliance-item">
+                                <div class="compliance-info">
+                                    <span class="compliance-name">GDPR Compliance</span>
+                                    <span class="compliance-status compliant">Compliant</span>
+                                </div>
+                                <div class="compliance-details">
+                                    <span>Last Review: Jan 2025</span>
+                                    <span>Next Review: Jun 2025</span>
+                                </div>
+                            </div>
+                            
+                            <div class="compliance-item">
+                                <div class="compliance-info">
+                                    <span class="compliance-name">ISO 27001</span>
+                                    <span class="compliance-status valid">Valid</span>
+                                </div>
+                                <div class="compliance-details">
+                                    <span>Certificate: ISO-27001-2024</span>
+                                    <span>Audit: Passed (Aug 2024)</span>
+                                </div>
+                            </div>
+                            
+                            <div class="compliance-item">
+                                <div class="compliance-info">
+                                    <span class="compliance-name">SOX Compliance</span>
+                                    <span class="compliance-status passed">Passed</span>
+                                </div>
+                                <div class="compliance-details">
+                                    <span>Last Audit: Dec 2024</span>
+                                    <span>Score: 98%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card flight-logs">
+                    <div class="card__header">
+                        <h3>Flight Logs</h3>
+                        <span class="badge">156 flights logged</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="log-summary">
+                            <div class="log-stat">
+                                <span class="log-label">Total Flight Time</span>
+                                <span class="log-value">347.5 hours</span>
+                            </div>
+                            <div class="log-stat">
+                                <span class="log-label">Compliance Rate</span>
+                                <span class="log-value">100%</span>
+                            </div>
+                            <div class="log-stat">
+                                <span class="log-label">Safety Incidents</span>
+                                <span class="log-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Analytics Page -->
+        <section id="analytics-page" class="page">
+            <div class="page-header">
+                <h2>Performance Analytics</h2>
+                <div class="page-actions">
+                    <select class="form-control">
+                        <option>Last 30 Days</option>
+                        <option>Last Quarter</option>
+                        <option>Last Year</option>
+                    </select>
+                    <button class="btn btn--outline">Export Report</button>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="card revenue-card">
+                    <div class="card__header">
+                        <h3>Revenue Metrics</h3>
+                        <span class="trend-indicator positive">↗ +23%</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="revenue-chart-container" style="position: relative; height: 200px;">
+                            <canvas id="revenue-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card missions-card">
+                    <div class="card__header">
+                        <h3>Mission Success Rate</h3>
+                        <span class="success-rate">98.7%</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="missions-chart-container" style="position: relative; height: 200px;">
+                            <canvas id="missions-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card kpi-grid">
+                    <div class="card__header">
+                        <h3>Key Performance Indicators</h3>
+                    </div>
+                    <div class="card__body">
+                        <div class="kpi-items">
+                            <div class="kpi-item">
+                                <span class="kpi-value">$487K</span>
+                                <span class="kpi-label">Monthly ARR</span>
+                                <span class="kpi-change positive">+15%</span>
+                            </div>
+                            <div class="kpi-item">
+                                <span class="kpi-value">142</span>
+                                <span class="kpi-label">Missions Completed</span>
+                                <span class="kpi-change positive">+8%</span>
+                            </div>
+                            <div class="kpi-item">
+                                <span class="kpi-value">4.2</span>
+                                <span class="kpi-label">Avg Flight Hours/Day</span>
+                                <span class="kpi-change neutral">±0%</span>
+                            </div>
+                            <div class="kpi-item">
+                                <span class="kpi-value">$3,430</span>
+                                <span class="kpi-label">Cost per Mission</span>
+                                <span class="kpi-change negative">-5%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
