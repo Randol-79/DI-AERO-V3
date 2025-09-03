@@ -5,6 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DI AERO - Drone Intelligence Platform</title>
     <link rel="stylesheet" href="style.css">
+
+    <!-- Mapbox (safe: no key here) -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+
+    <!-- Placeholder for token injection -->
+    <meta name="mapbox-token" content="">
+
+    <!-- Charts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -38,7 +47,164 @@
     </header>
 
     <main class="main-content">
-        <!-- ... (all your body content remains unchanged) ... -->
+        <!-- === Dashboard Page === -->
+        <section id="dashboard-page" class="page active">
+            <div class="page-header">
+                <h2>Mission Control Dashboard</h2>
+                <div class="page-actions">
+                    <button class="btn btn--primary">New Mission</button>
+                    <button class="btn btn--secondary">Emergency Protocol</button>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <!-- System Health -->
+                <div class="card dashboard-card">
+                    <div class="card__header">
+                        <h3>System Health</h3>
+                        <span class="status status--success">All Systems Operational</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="health-metrics">
+                            <div class="metric">
+                                <span class="metric-label">Jetson Orin</span>
+                                <div class="metric-value">
+                                    <span>CPU: 45%</span>
+                                    <span>GPU: 78%</span>
+                                    <span>Temp: 62°C</span>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">AI Inference</span>
+                                <span class="metric-value highlight">8.5ms latency</span>
+                            </div>
+                            <div class="metric">
+                                <span class="metric-label">Cloud Connectivity</span>
+                                <span class="metric-value">120ms response</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Active Missions -->
+                <div class="card dashboard-card">
+                    <div class="card__header">
+                        <h3>Active Missions</h3>
+                        <span class="badge">2 Active</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="mission-list" id="active-missions">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weather Alerts -->
+                <div class="card dashboard-card">
+                    <div class="card__header">
+                        <h3>Weather Conditions</h3>
+                        <span class="status status--warning">Wind Advisory</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="weather-info">
+                            <div class="weather-current">
+                                <span class="weather-temp">72°F</span>
+                                <span class="weather-desc">Clear, Wind 5mph NE</span>
+                            </div>
+                            <div class="weather-alert">
+                                <strong>Wind Advisory:</strong> Winds 15-25 mph expected. Monitor flight conditions. Expires 3:00 PM
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Agent Status -->
+                <div class="card dashboard-card">
+                    <div class="card__header">
+                        <h3>Agent Ecosystem</h3>
+                        <span class="status status--success">5 Agents Active</span>
+                    </div>
+                    <div class="card__body">
+                        <div class="agent-overview" id="agent-overview">
+                            <!-- Dynamic content -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === Flight Ops Page === -->
+        <section id="flight-ops-page" class="page">
+            <div class="page-header">
+                <h2>Flight Operations</h2>
+                <div class="page-actions">
+                    <button class="btn btn--primary">Plan Mission</button>
+                    <button class="btn btn--outline">Upload Flight Data</button>
+                </div>
+            </div>
+
+            <div class="flight-ops-layout">
+                <div class="map-container">
+                    <div id="flight-map" class="flight-map"></div>
+                    <div class="map-controls">
+                        <button class="map-btn" id="center-map">Center View</button>
+                        <button class="map-btn" id="show-nofly">No-Fly Zones</button>
+                        <button class="map-btn" id="weather-overlay">Weather Layer</button>
+                    </div>
+                </div>
+                
+                <div class="flight-sidebar">
+                    <div class="card">
+                        <div class="card__header">
+                            <h3>Current Mission: M001</h3>
+                            <span class="status status--success">Active</span>
+                        </div>
+                        <div class="card__body">
+                            <div class="flight-details">
+                                <div class="detail-row">
+                                    <span class="label">Drone:</span>
+                                    <span class="value">DJI Mavic 3T-Alpha</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Pilot:</span>
+                                    <span class="value">Sarah Johnson</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Altitude:</span>
+                                    <span class="value">120 ft AGL</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Battery:</span>
+                                    <span class="value">87%</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="label">Signal:</span>
+                                    <span class="value">Strong (-65 dBm)</span>
+                                </div>
+                            </div>
+                            <div class="flight-controls">
+                                <button class="btn btn--primary btn--full-width">Return to Home</button>
+                                <button class="btn btn--outline btn--full-width">Pause Mission</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card__header">
+                            <h3>Mission Queue</h3>
+                        </div>
+                        <div class="card__body">
+                            <div class="mission-queue" id="mission-queue">
+                                <!-- Dynamic content -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- === Other pages (Thermal, Agents, Custody, Integrations, Compliance, Analytics) remain unchanged === -->
+
     </main>
 
     <script src="app.js"></script>
